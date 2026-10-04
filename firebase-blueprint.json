@@ -1,0 +1,96 @@
+{
+  "entities": {
+    "Member": {
+      "title": "SquashMember",
+      "description": "Squash club member details",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "username": { "type": "string" },
+        "password": { "type": "string" },
+        "name": { "type": "string" },
+        "avatar": { "type": "string" },
+        "role": { "type": "string" },
+        "roleLabel": { "type": "string" },
+        "isAdmin": { "type": "boolean" },
+        "tenure": { "type": "string" },
+        "age": { "type": "number" },
+        "ballRating": { "type": "string" },
+        "ratingLabel": { "type": "string" },
+        "ratingSub": { "type": "string" },
+        "primaryTeam": { "type": "string" },
+        "clubPass": { "type": "string" },
+        "trophiesCount": { "type": "number" },
+        "statusColor": { "type": "string" },
+        "phone": { "type": "string" },
+        "bio": { "type": "string" }
+      },
+      "required": ["id", "username", "name"]
+    },
+    "FeedPost": {
+      "title": "FeedPost",
+      "description": "Club feed post",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "authorAvatar": { "type": "string" },
+        "caption": { "type": "string" },
+        "timeAgo": { "type": "string" },
+        "category": { "type": "string" },
+        "awardsDetail": { "type": "string" }
+      },
+      "required": ["id", "authorId", "caption"]
+    },
+    "PushToken": {
+      "title": "PushToken",
+      "description": "Device FCM push notification registration token",
+      "type": "object",
+      "properties": {
+        "token": { "type": "string" },
+        "memberId": { "type": "string" },
+        "memberName": { "type": "string" },
+        "role": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "lastActiveAt": { "type": "string" }
+      },
+      "required": ["token", "memberId"]
+    },
+    "PushLog": {
+      "title": "PushLog",
+      "description": "Push notification delivery broadcast log",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "body": { "type": "string" },
+        "senderName": { "type": "string" },
+        "sentAt": { "type": "string" }
+      },
+      "required": ["id", "title", "body"]
+    }
+  },
+  "firestore": {
+    "/club_members/{memberId}": {
+      "schema": "Member",
+      "description": "Collection of club members"
+    },
+    "/club_posts/{postId}": {
+      "schema": "FeedPost",
+      "description": "Collection of club posts"
+    },
+    "/club_push_tokens/{tokenId}": {
+      "schema": "PushToken",
+      "description": "Collection of subscriber device FCM push tokens"
+    },
+    "/club_push_logs/{logId}": {
+      "schema": "PushLog",
+      "description": "Broadcast history of push notifications"
+    },
+    "/club_metadata/{metaId}": {
+      "schema": "Member",
+      "description": "System metadata"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "logs": [
+    {
+      "id": "log-init-001",
+      "timestamp": "2026-09-26T15:30:00.000Z",
+      "title": "[정기전 공지] 10월 전국 동호인 스쿼시 페스티벌 참가 신청 안내",
+      "content": "안녕하세요 MAKS 회원 여러분! 10월 첫째 주 탄천에서 개최되는 전국 동호인 스쿼시 대회 단체전 및 개인전 엔트리를 접수합니다.",
+      "link": "https://ais-dev-q7dzxredwvjkaswcgwbkop-674901514921.asia-northeast1.run.app",
+      "totalRecipients": 7,
+      "successfulCount": 7,
+      "failedCount": 0,
+      "chunksCount": 2,
+      "successfulUuids": [
+        "uuid_kmj_maks_101",
+        "uuid_psj_maks_102",
+        "uuid_ldh_maks_103",
+        "uuid_ckw_maks_104",
+        "uuid_jjy_maks_105",
+        "uuid_psy_maks_106",
+        "uuid_ljw_maks_107"
+      ]
+    }
+  ]
+}

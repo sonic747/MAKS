@@ -1,0 +1,8 @@
+{
+  "name": "Remix MAKS SQUASH_Ver2",
+  "description": "MAKS 스쿼시 클럽 공식 공지, 카카오톡 간편 회원가입 및 알림 연동, 명예의 전당 및 백업 관리 시스템(ver2 2026.10.05)",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

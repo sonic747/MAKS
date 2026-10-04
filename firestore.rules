@@ -1,0 +1,40 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Club members collection
+    match /club_members/{memberId} {
+      allow read, write: if true;
+    }
+
+    // Club posts / announcements collection
+    match /club_posts/{postId} {
+      allow read, write: if true;
+    }
+
+    // Club push notification tokens
+    match /club_push_tokens/{tokenId} {
+      allow read, write: if true;
+    }
+
+    // Club push notification logs
+    match /club_push_logs/{logId} {
+      allow read, write: if true;
+    }
+
+    // Club system metadata collection
+    match /club_metadata/{metaId} {
+      allow read, write: if true;
+    }
+
+    // Test connection doc
+    match /test/{docId} {
+      allow read, write: if true;
+    }
+
+    // Default fallback
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
+
