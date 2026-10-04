@@ -89,18 +89,29 @@ export const AddHonorOrPhotoModal: React.FC<AddHonorOrPhotoModalProps> = ({
     try {
       setIsCompressing(true);
       const compressed = await compressImageFile(file, {
-        maxWidth: 1200,
-        maxHeight: 1800,
-        quality: 0.8,
-        maxSizeBytes: 400 * 1024,
+        maxWidth: 800,
+        maxHeight: 1200,
+        quality: 0.65,
+        maxSizeBytes: 60 * 1024,
       });
       setImageUrl(compressed);
     } catch (err) {
       console.warn('Image compression fallback:', err);
       const reader = new FileReader();
-      reader.onload = () => {
+      reader.onload = async () => {
         if (typeof reader.result === 'string') {
-          setImageUrl(reader.result);
+          try {
+            const { compressDataUrl } = await import('../utils/imageCompressor');
+            const compressedFallback = await compressDataUrl(reader.result, {
+              maxWidth: 800,
+              maxHeight: 1200,
+              quality: 0.65,
+              maxSizeBytes: 60 * 1024,
+            });
+            setImageUrl(compressedFallback);
+          } catch (e) {
+            setImageUrl(reader.result as string);
+          }
         }
       };
       reader.readAsDataURL(file);

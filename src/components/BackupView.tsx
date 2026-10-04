@@ -10,6 +10,9 @@ import {
   CheckCircle2,
   CloudCheck,
   Cloud,
+  Archive,
+  FileText,
+  Loader2,
 } from 'lucide-react';
 import { SquashMember, FeedPost } from '../types';
 
@@ -17,8 +20,9 @@ interface BackupViewProps {
   members: SquashMember[];
   posts?: FeedPost[];
   maxCapacity: number;
+  onDownloadZip: () => void;
   onDownloadJson: () => void;
-  onImportJson: (jsonData: string) => boolean | Promise<boolean>;
+  onRestoreFile: (file: File) => Promise<boolean>;
   onSyncServer?: () => Promise<void>;
   isSyncing?: boolean;
 }
@@ -27,29 +31,33 @@ export const BackupView: React.FC<BackupViewProps> = ({
   members,
   posts = [],
   maxCapacity,
+  onDownloadZip,
   onDownloadJson,
-  onImportJson,
+  onRestoreFile,
   onSyncServer,
   isSyncing,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [syncSuccess, setSyncSuccess] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(false);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = async () => {
-        if (typeof reader.result === 'string') {
-          const success = await onImportJson(reader.result);
-          if (success) {
-            alert('데이터 파일 복원 및 클라우드 동기화가 성공적으로 완료되었습니다.');
-          } else {
-            alert('올바른 백업 파일 형식이 아닙니다.');
-          }
+      setIsRestoring(true);
+      try {
+        const success = await onRestoreFile(file);
+        if (success) {
+          alert('데이터 및 첨부 사진 복원과 클라우드 동기화가 성공적으로 완료되었습니다.');
+        } else {
+          alert('올바른 백업 파일(ZIP 또는 JSON) 형식이 아닙니다.');
         }
-      };
-      reader.readAsText(file);
+      } catch (err: any) {
+        alert(`복원 중 오류가 발생했습니다: ${err?.message || err}`);
+      } finally {
+        setIsRestoring(false);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+      }
     }
   };
 
@@ -144,22 +152,35 @@ export const BackupView: React.FC<BackupViewProps> = ({
         <div className="p-4 rounded-xl bg-[#161822] border border-white/[0.08] flex flex-col justify-between space-y-3 shadow-lg">
           <div>
             <div className="w-10 h-10 rounded-xl bg-[#f5c200]/10 border border-[#f5c200]/30 flex items-center justify-center text-[#f5c200] mb-2">
-              <FileDown size={22} />
+              <Archive size={22} />
             </div>
             <h3 className="font-chivo font-black text-white text-sm">
-              데이터 백업 파일 다운로드
+              데이터 및 첨부 사진 백업 다운로드
             </h3>
-            <p className="text-xs text-gray-400 mt-1">
-              현재 클럽에 등록된 모든 회원 명부와 피드 글, 대회 시상 이력을 JSON 파일로 보관합니다.
+            <p className="text-xs text-gray-400 mt-1 leading-relaxed">
+              회원 명부, 공지사항(제목, 내용, 모든 댓글), 시상(명예) 이력과 모든 첨부 사진(원본 파일)을 안전하게 백업합니다.
             </p>
           </div>
-          <button
-            onClick={onDownloadJson}
-            className="w-full py-2.5 px-3 rounded-lg bg-[#1e222d] hover:bg-[#282d3c] border border-white/10 text-white font-chivo font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
-          >
-            <FileDown size={14} />
-            <span>JSON 백업 파일 다운로드</span>
-          </button>
+
+          <div className="space-y-2">
+            {/* ZIP Backup Button (Recommended) */}
+            <button
+              onClick={onDownloadZip}
+              className="w-full py-2.5 px-3 rounded-lg bg-[#f5c200] hover:bg-[#ffe299] text-[#0f1118] font-chivo font-black text-xs flex items-center justify-center gap-2 shadow transition-all cursor-pointer active:scale-95"
+            >
+              <Archive size={15} />
+              <span>전체 압축 백업(ZIP) 다운로드 (사진+데이터 통합, 권장)</span>
+            </button>
+
+            {/* JSON Backup Button */}
+            <button
+              onClick={onDownloadJson}
+              className="w-full py-2 px-3 rounded-lg bg-[#1e222d] hover:bg-[#282d3c] border border-white/10 text-gray-300 hover:text-white font-chivo font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
+            >
+              <FileText size={13} />
+              <span>단일 JSON 파일 다운로드</span>
+            </button>
+          </div>
         </div>
 
         {/* Import / Restore */}
@@ -171,24 +192,34 @@ export const BackupView: React.FC<BackupViewProps> = ({
             <h3 className="font-chivo font-black text-white text-sm">
               백업 파일 업로드 및 클라우드 복원
             </h3>
-            <p className="text-xs text-gray-400 mt-1">
-              기존 백업 JSON 파일을 불러와 Firestore 클라우드 DB와 모든 기기에 즉시 복원합니다.
+            <p className="text-xs text-gray-400 mt-1 leading-relaxed">
+              백업된 <b>ZIP 압축 파일(사진 포함)</b> 또는 <b>JSON 파일</b>을 불러와 Firestore 클라우드 DB와 모든 기기에 즉시 복원합니다.
             </p>
           </div>
           <div>
             <input
               ref={fileInputRef}
               type="file"
-              accept=".json"
+              accept=".zip,.json,application/zip,application/json"
               onChange={handleFileUpload}
               className="hidden"
             />
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="w-full py-2.5 px-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-chivo font-bold text-xs flex items-center justify-center gap-2 shadow transition-all cursor-pointer"
+              disabled={isRestoring}
+              className="w-full py-2.5 px-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-chivo font-bold text-xs flex items-center justify-center gap-2 shadow transition-all cursor-pointer disabled:opacity-50"
             >
-              <FileUp size={14} />
-              <span>백업 파일 선택 및 복원</span>
+              {isRestoring ? (
+                <>
+                  <Loader2 size={14} className="animate-spin" />
+                  <span>백업 파일 압축 해제 및 복원 중...</span>
+                </>
+              ) : (
+                <>
+                  <FileUp size={14} />
+                  <span>백업 파일 선택 및 복원 (ZIP 또는 JSON)</span>
+                </>
+              )}
             </button>
           </div>
         </div>

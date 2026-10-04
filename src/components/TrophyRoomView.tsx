@@ -85,6 +85,16 @@ export const TrophyRoomView: React.FC<TrophyRoomViewProps> = ({
 
   return (
     <div className="flex-1 overflow-y-auto px-3 sm:px-4 py-3 space-y-4 pb-24">
+      {/* Top CTA: 시상 등록 버튼 (가장 위쪽 / 이름 윗쪽) */}
+      <button
+        type="button"
+        onClick={onOpenAddPhotoModal}
+        className="w-full py-3.5 px-4 rounded-xl bg-[#f5c200] hover:bg-[#ffe299] text-[#0f1118] font-chivo font-black text-sm sm:text-base flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(245,194,0,0.25)] active:scale-[0.98] transition-all cursor-pointer"
+      >
+        <span>🏆</span>
+        <span>시상 등록</span>
+      </button>
+
       {/* Member Profile Card */}
       <div className="rounded-xl bg-[#161822] border border-white/[0.08] p-4 relative overflow-hidden shadow-lg">
         {/* Subtle background glow */}
@@ -292,19 +302,11 @@ export const TrophyRoomView: React.FC<TrophyRoomViewProps> = ({
         </div>
       </div>
 
-      {/* Bottom Action Buttons */}
-      <div className="space-y-2.5 pt-2">
-        <button
-          onClick={onOpenAddPhotoModal}
-          className="w-full py-3.5 px-4 rounded-lg bg-[#f5c200] hover:bg-[#ffe299] text-[#0f1118] font-chivo font-black text-sm flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(245,194,0,0.25)] active:scale-[0.98] transition-all cursor-pointer"
-        >
-          <span>🏆</span>
-          <span>시상 등록</span>
-        </button>
-
+      {/* Bottom Action Button: 동료 응원 한마디 남기기 */}
+      <div className="pt-2">
         <button
           onClick={onOpenCheerModal}
-          className="w-full py-3 px-4 rounded-lg bg-[#1e222d] hover:bg-[#282d3c] border border-white/[0.12] text-white font-chivo font-bold text-sm flex items-center justify-center gap-2 active:scale-[0.98] transition-all cursor-pointer"
+          className="w-full py-3.5 px-4 rounded-xl bg-[#1e222d] hover:bg-[#282d3c] border border-white/[0.12] text-white font-chivo font-bold text-sm flex items-center justify-center gap-2 active:scale-[0.98] transition-all cursor-pointer"
         >
           <span>👍</span>
           <span>동료 응원 한마디 남기기</span>

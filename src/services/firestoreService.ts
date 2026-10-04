@@ -230,6 +230,61 @@ export async function saveMemberToFirestore(member: SquashMember): Promise<void>
   const path = `${MEMBERS_COLLECTION}/${member.id}`;
   const sanitized = JSON.parse(JSON.stringify(member));
 
+  // Safeguard: Ensure member document never approaches Firestore's 1,048,576 bytes limit
+  // If the serialized member object is > 400KB, compress images in honors and photos
+  try {
+    const serializedSize = JSON.stringify(sanitized).length;
+    if (serializedSize > 400 * 1024) {
+      const { compressDataUrl } = await import('../utils/imageCompressor');
+
+      if (sanitized.honors && Array.isArray(sanitized.honors)) {
+        for (const honor of sanitized.honors) {
+          if (honor.imageUrl && honor.imageUrl.startsWith('data:image')) {
+            const estimatedBytes = honor.imageUrl.length * 0.75;
+            if (estimatedBytes > 60 * 1024) {
+              honor.imageUrl = await compressDataUrl(honor.imageUrl, {
+                maxWidth: 700,
+                maxHeight: 1050,
+                quality: 0.6,
+                maxSizeBytes: 50 * 1024,
+              });
+            }
+          }
+        }
+      }
+
+      if (sanitized.photos && Array.isArray(sanitized.photos)) {
+        for (const photo of sanitized.photos) {
+          if (photo.imageUrl && photo.imageUrl.startsWith('data:image')) {
+            const estimatedBytes = photo.imageUrl.length * 0.75;
+            if (estimatedBytes > 60 * 1024) {
+              photo.imageUrl = await compressDataUrl(photo.imageUrl, {
+                maxWidth: 700,
+                maxHeight: 1050,
+                quality: 0.6,
+                maxSizeBytes: 50 * 1024,
+              });
+            }
+          }
+        }
+      }
+
+      if (sanitized.avatar && sanitized.avatar.startsWith('data:image')) {
+        const estimatedBytes = sanitized.avatar.length * 0.75;
+        if (estimatedBytes > 60 * 1024) {
+          sanitized.avatar = await compressDataUrl(sanitized.avatar, {
+            maxWidth: 400,
+            maxHeight: 400,
+            quality: 0.6,
+            maxSizeBytes: 50 * 1024,
+          });
+        }
+      }
+    }
+  } catch (compErr) {
+    console.warn('Safeguard compression error:', compErr);
+  }
+
   try {
     const memberDoc = doc(db, MEMBERS_COLLECTION, member.id);
     await setDoc(memberDoc, sanitized, { merge: true });

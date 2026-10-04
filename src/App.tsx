@@ -561,16 +561,24 @@ export default function App() {
       honors: updatedHonors,
     };
 
-    // 1. Optimistic state update immediately
-    setMembers((prev) => prev.map((m) => (m.id === memberId ? updated : m)));
+    // 1. Optimistic state and local storage cache update immediately
+    const updatedMembers = members.map((m) => (m.id === memberId ? updated : m));
+    setMembers(updatedMembers);
+    try {
+      localStorage.setItem(STORAGE_KEY_MEMBERS_CACHE, JSON.stringify(updatedMembers));
+    } catch (e) {}
+
     if (currentUser?.id === memberId) {
       setCurrentUser(updated);
+      try {
+        localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(updated));
+      } catch (e) {}
     }
 
     try {
       await saveMemberToFirestore(updated);
     } catch (err) {
-      console.error('Failed to add honor', err);
+      console.error('Failed to add honor to cloud DB', err);
     }
   };
 
@@ -585,10 +593,18 @@ export default function App() {
       honors: updatedHonors,
     };
 
-    // 1. Optimistic state update immediately
-    setMembers((prev) => prev.map((m) => (m.id === memberId ? updated : m)));
+    // 1. Optimistic state and cache update immediately
+    const updatedMembers = members.map((m) => (m.id === memberId ? updated : m));
+    setMembers(updatedMembers);
+    try {
+      localStorage.setItem(STORAGE_KEY_MEMBERS_CACHE, JSON.stringify(updatedMembers));
+    } catch (e) {}
+
     if (currentUser?.id === memberId) {
       setCurrentUser(updated);
+      try {
+        localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(updated));
+      } catch (e) {}
     }
 
     try {
@@ -620,9 +636,17 @@ export default function App() {
     };
 
     // 1. Optimistic state update immediately
-    setMembers((prev) => prev.map((m) => (m.id === memberId ? updated : m)));
+    const updatedMembers = members.map((m) => (m.id === memberId ? updated : m));
+    setMembers(updatedMembers);
+    try {
+      localStorage.setItem(STORAGE_KEY_MEMBERS_CACHE, JSON.stringify(updatedMembers));
+    } catch (e) {}
+
     if (currentUser?.id === memberId) {
       setCurrentUser(updated);
+      try {
+        localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(updated));
+      } catch (e) {}
     }
 
     try {
@@ -643,14 +667,43 @@ export default function App() {
       ...target,
       photos: [newPhoto, ...target.photos],
     };
+    const updatedMembers = members.map((m) => (m.id === memberId ? updated : m));
+    setMembers(updatedMembers);
+    try {
+      localStorage.setItem(STORAGE_KEY_MEMBERS_CACHE, JSON.stringify(updatedMembers));
+    } catch (e) {}
+
     try {
       await saveMemberToFirestore(updated);
     } catch (err) {
       console.error('Failed to add photo', err);
-      setMembers((prev) => prev.map((m) => (m.id === memberId ? updated : m)));
     }
   };
 
+  // ZIP Backup download (Data + Separated Original Images)
+  const handleDownloadZip = async () => {
+    try {
+      setIsSyncing(true);
+      const { createZipBackup } = await import('./utils/zipBackup');
+      const { blob, filename, stats } = await createZipBackup(members, posts);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      console.log(`ZIP backup completed: ${stats.membersCount} members, ${stats.postsCount} posts, ${stats.imagesCount} images.`);
+    } catch (err) {
+      console.error('Failed to create ZIP backup', err);
+      alert('ZIP 백업 파일 생성 중 오류가 발생했습니다.');
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  // Standard JSON Backup download
   const handleDownloadJson = () => {
     const exportData = {
       club_name: 'MAKS Squash Club',
@@ -670,22 +723,32 @@ export default function App() {
     downloadAnchor.remove();
   };
 
-  const handleImportJson = async (jsonData: string): Promise<boolean> => {
+  // Unified File Restore (Supports both .zip and .json)
+  const handleRestoreFile = async (file: File): Promise<boolean> => {
     try {
-      const parsed = JSON.parse(jsonData);
-      if (parsed.members && Array.isArray(parsed.members)) {
-        setIsSyncing(true);
-        const importedMembers: SquashMember[] = parsed.members;
-        const importedPosts: FeedPost[] = Array.isArray(parsed.posts) ? parsed.posts : posts;
-        await syncAllToFirestore(importedMembers, importedPosts);
+      setIsSyncing(true);
+      const { restoreBackupFile } = await import('./utils/zipBackup');
+      const restored = await restoreBackupFile(file);
+
+      if (restored.members && Array.isArray(restored.members)) {
+        await syncAllToFirestore(restored.members, restored.posts);
+        setMembers(restored.members);
+        setPosts(restored.posts);
+
+        try {
+          localStorage.setItem(STORAGE_KEY_MEMBERS_CACHE, JSON.stringify(restored.members));
+          localStorage.setItem(STORAGE_KEY_POSTS_CACHE, JSON.stringify(restored.posts));
+        } catch (e) {}
+
         setIsSyncing(false);
         return true;
       }
-      return false;
-    } catch (err) {
-      console.error('Invalid JSON file', err);
       setIsSyncing(false);
       return false;
+    } catch (err) {
+      console.error('Failed to restore backup file', err);
+      setIsSyncing(false);
+      throw err;
     }
   };
 
@@ -810,8 +873,9 @@ export default function App() {
               members={members}
               posts={posts}
               maxCapacity={maxCapacity}
+              onDownloadZip={handleDownloadZip}
               onDownloadJson={handleDownloadJson}
-              onImportJson={handleImportJson}
+              onRestoreFile={handleRestoreFile}
               onSyncServer={handleForceCloudSync}
               isSyncing={isSyncing}
             />
