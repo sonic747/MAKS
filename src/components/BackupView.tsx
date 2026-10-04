@@ -123,7 +123,7 @@ export const BackupView: React.FC<BackupViewProps> = ({
           </div>
         )}
 
-        {/* Status Stats: 모든 공지, 회원정보 연동 */}
+        {/* Status Stats: 모든 게시물, 회원정보 연동 */}
         <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-white/[0.08]">
           <div className="p-2.5 rounded-lg bg-[#11131a] border border-white/5">
             <span className="text-[10px] text-gray-400 block font-chivo">실시간 연동 회원</span>
@@ -132,7 +132,7 @@ export const BackupView: React.FC<BackupViewProps> = ({
             </span>
           </div>
           <div className="p-2.5 rounded-lg bg-[#11131a] border border-white/5">
-            <span className="text-[10px] text-gray-400 block font-chivo">실시간 연동 공지글</span>
+            <span className="text-[10px] text-gray-400 block font-chivo">실시간 연동 게시물</span>
             <span className="font-chivo font-black text-sm text-[#f5c200]">
               {posts.length}건
             </span>
@@ -158,7 +158,7 @@ export const BackupView: React.FC<BackupViewProps> = ({
               데이터 및 첨부 사진 백업 다운로드
             </h3>
             <p className="text-xs text-gray-400 mt-1 leading-relaxed">
-              회원 명부, 공지사항(제목, 내용, 모든 댓글), 시상(명예) 이력과 모든 첨부 사진(원본 파일)을 안전하게 백업합니다.
+              회원 명부, 게시물(제목, 내용, 모든 댓글), 시상(명예) 이력과 모든 첨부 사진(원본 파일)을 안전하게 백업합니다.
             </p>
           </div>
 
@@ -235,7 +235,7 @@ export const BackupView: React.FC<BackupViewProps> = ({
             </div>
             <div>
               <h3 className="font-chivo font-black text-sm text-white flex items-center gap-1.5">
-                <span>MAKS 바탕화면 단축아이콘 & 새 공지 뱃지 관리</span>
+                <span>MAKS 바탕화면 단축아이콘 & 새 게시물 뱃지 관리</span>
                 <span className="px-1.5 py-0.2 rounded bg-amber-500/20 text-[#f5c200] text-[9px] font-bold">PWA</span>
               </h3>
               <p className="text-[11px] text-gray-400">
@@ -251,7 +251,7 @@ export const BackupView: React.FC<BackupViewProps> = ({
             <span className="font-chivo font-bold text-white">MAKS</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-gray-400">읽지 않은 공지 수량 뱃지</span>
+            <span className="text-gray-400">읽지 않은 게시물 수량 뱃지</span>
             <span className="font-chivo font-bold text-[#f5c200]">아이콘 우측 상단 빨간색 숫자(Badging API) 및 탭 타이틀 자동 표기</span>
           </div>
           <div className="flex items-center justify-between">

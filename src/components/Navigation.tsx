@@ -17,8 +17,8 @@ export const Navigation: React.FC<NavigationProps> = ({
 }) => {
   const isAdmin = currentUser?.username === 'admin' || currentUser?.role === 'admin' || currentUser?.isAdmin;
 
-  // Non-admins see only '공지' and '명예' ("회원" 탭 삭제).
-  // Admins see '사용자관리', '백업관리', '공지', '명예'.
+  // Non-admins see only '게시물' and '명예' ("회원" 탭 삭제).
+  // Admins see '사용자관리', '백업관리', '게시물', '명예'.
   const navItems: { id: TabType; label: string; icon: React.ReactNode; badge?: number }[] = isAdmin
     ? [
         {
@@ -33,7 +33,7 @@ export const Navigation: React.FC<NavigationProps> = ({
         },
         {
           id: 'feed',
-          label: '공지',
+          label: '게시물',
           icon: <Flame size={19} strokeWidth={2.2} />,
           badge: unreadCount,
         },
@@ -46,7 +46,7 @@ export const Navigation: React.FC<NavigationProps> = ({
     : [
         {
           id: 'feed',
-          label: '공지',
+          label: '게시물',
           icon: <Flame size={19} strokeWidth={2.2} />,
           badge: unreadCount,
         },

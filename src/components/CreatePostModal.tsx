@@ -65,7 +65,7 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!caption.trim() && !title.trim()) {
-      alert('공지 제목 또는 내용을 작성해주세요.');
+      alert('게시물 제목 또는 내용을 작성해주세요.');
       return;
     }
 
@@ -81,7 +81,7 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
         isCaptain: currentMember.role === 'captain',
         timeAgo: '방금 전',
         location: 'MAKS 스쿼시 클럽',
-        badgeTag: 'NOTICE',
+        badgeTag: undefined,
         badgeType: 'regular',
         title: title.trim() || undefined,
         imageUrl: finalImage,
@@ -102,7 +102,7 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
           <div className="flex items-center gap-2">
             <span className="text-[#f5c200]">📢</span>
             <h2 className="font-chivo font-black text-base text-white">
-              공지글 작성
+              게시물 작성
             </h2>
           </div>
           <button
@@ -118,7 +118,7 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
           <div>
             <label className="block text-[11px] font-chivo font-bold text-gray-300 mb-1 flex items-center justify-between">
               <span>제목</span>
-              <span className="text-[10px] text-gray-400 font-normal">공지 요약 제목</span>
+              <span className="text-[10px] text-gray-400 font-normal">게시물 요약 제목</span>
             </label>
             <input
               type="text"
@@ -140,7 +140,7 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
             <textarea
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
-              placeholder="스쿼시 클럽 공지사항 및 회원 안내 내용을 입력해주세요..."
+              placeholder="스쿼시 클럽 소식 및 회원 안내 내용을 입력해주세요..."
               rows={5}
               className="w-full px-3 py-2.5 rounded-lg bg-[#11131a] border border-white/10 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#f5c200] resize-none leading-relaxed"
               required

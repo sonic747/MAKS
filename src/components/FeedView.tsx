@@ -64,14 +64,14 @@ export const FeedView: React.FC<FeedViewProps> = ({
 
   return (
     <div className="flex-1 overflow-y-auto px-3 sm:px-4 py-3 space-y-3.5 pb-24">
-      {/* Top CTA: 공지작성 */}
+      {/* Top CTA: 게시물 작성 */}
       <button
         type="button"
         onClick={onOpenCreatePost}
         className="w-full py-3 px-4 rounded-xl bg-[#f5c200] hover:bg-[#ffe299] text-[#0f1118] font-chivo font-black text-sm sm:text-base flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(245,194,0,0.3)] active:scale-[0.98] transition-all cursor-pointer"
       >
         <Camera size={20} strokeWidth={2.5} />
-        <span>공지작성</span>
+        <span>게시물 작성</span>
       </button>
 
       {/* Feed Cards or Empty State */}
@@ -82,10 +82,10 @@ export const FeedView: React.FC<FeedViewProps> = ({
           </div>
           <div>
             <h3 className="font-chivo font-black text-white text-sm sm:text-base">
-              등록된 공지/게시글이 없습니다
+              등록된 게시물이 없습니다
             </h3>
             <p className="text-xs text-gray-400 mt-1">
-              상단의 [공지작성] 버튼을 눌러 첫 번째 소식을 공유해 보세요!
+              상단의 [게시물 작성] 버튼을 눌러 첫 번째 소식을 공유해 보세요!
             </p>
           </div>
         </div>
@@ -216,8 +216,8 @@ export const FeedView: React.FC<FeedViewProps> = ({
                     referrerPolicy="no-referrer"
                   />
 
-                  {/* Overlay Badge Tag */}
-                  {post.badgeTag && (
+                  {/* Overlay Badge Tag (NOTICE 제외) */}
+                  {post.badgeTag && post.badgeTag !== 'NOTICE' && (
                     <div className="absolute top-2.5 left-2.5">
                       <span className="px-2.5 py-1 rounded-md bg-black/75 backdrop-blur-md border border-white/20 text-[#f5c200] font-chivo font-black text-[11px] tracking-wider uppercase shadow-md flex items-center gap-1">
                         <span>⚡</span>
@@ -263,22 +263,22 @@ export const FeedView: React.FC<FeedViewProps> = ({
 
               {/* Post Content: Title & Caption */}
               <div className="p-3 sm:p-3.5 space-y-2">
-                {/* Title (if present) */}
+                {/* Title (제목은 녹색 text-emerald-400 으로 표시) */}
                 {post.title && (
                   <div>
-                    {post.badgeTag && !post.imageUrl && (
+                    {post.badgeTag && post.badgeTag !== 'NOTICE' && !post.imageUrl && (
                       <span className="px-2 py-0.5 rounded bg-[#f5c200]/20 text-[#f5c200] font-chivo font-black text-[10px] tracking-wider uppercase border border-[#f5c200]/30 inline-flex items-center gap-1 mb-1.5">
                         <span>⚡</span>
                         <span>{post.badgeTag}</span>
                       </span>
                     )}
-                    <h3 className="font-chivo font-black text-sm sm:text-base text-white leading-snug">
+                    <h3 className="font-chivo font-black text-sm sm:text-base text-emerald-400 leading-snug">
                       {post.title}
                     </h3>
                   </div>
                 )}
 
-                {!post.title && post.badgeTag && !post.imageUrl && (
+                {!post.title && post.badgeTag && post.badgeTag !== 'NOTICE' && !post.imageUrl && (
                   <div>
                     <span className="px-2 py-0.5 rounded bg-[#f5c200]/20 text-[#f5c200] font-chivo font-black text-[10px] tracking-wider uppercase border border-[#f5c200]/30 inline-flex items-center gap-1">
                       <span>⚡</span>
@@ -287,19 +287,13 @@ export const FeedView: React.FC<FeedViewProps> = ({
                   </div>
                 )}
 
-                {/* Caption Text */}
+                {/* Caption Text (본문 내 작성자 이름 제거) */}
                 <p className="text-xs sm:text-sm text-gray-200 leading-relaxed font-sans whitespace-pre-wrap">
-                  <span
-                    className="font-chivo font-extrabold text-white mr-1.5 cursor-pointer hover:underline"
-                    onClick={() => onViewMemberProfile(post.authorId)}
-                  >
-                    {post.authorName}
-                  </span>
                   {post.caption}
                 </p>
               </div>
 
-              {/* Comments & Actions Row (사진 첨부 여부와 무관하게 모든 공지 하단에 댓글 표시) */}
+              {/* Comments & Actions Row (사진 첨부 여부와 무관하게 모든 게시물 하단에 댓글 표시) */}
               <div className="px-3 sm:px-3.5 py-2.5 bg-[#12141c]/60 border-t border-white/[0.06] space-y-2">
                 <div className="flex items-center justify-between">
                   {/* Comments Button */}

@@ -185,7 +185,7 @@ export const PWAInstallModal: React.FC<PWAInstallModalProps> = ({
               </div>
               <div className="flex items-center gap-2">
                 <Check size={14} className="text-emerald-400 shrink-0" />
-                <span>새 공지 등록 시 아이콘에 <strong className="text-[#f5c200] font-bold">빨간 숫자 뱃지</strong> 자동 표시</span>
+                <span>새 게시물 등록 시 아이콘에 <strong className="text-[#f5c200] font-bold">빨간 숫자 뱃지</strong> 자동 표시</span>
               </div>
             </div>
 

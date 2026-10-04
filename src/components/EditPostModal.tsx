@@ -87,11 +87,11 @@ export const EditPostModal: React.FC<EditPostModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!caption.trim() && !title.trim()) {
-      alert('공지 제목 또는 내용을 작성해주세요.');
+      alert('게시물 제목 또는 내용을 작성해주세요.');
       return;
     }
 
-    let calculatedBadgeTag = badgeTag;
+    let calculatedBadgeTag: string | undefined = badgeTag;
     let calculatedBadgeType = badgeType;
 
     if (category === 'match') {
@@ -101,7 +101,7 @@ export const EditPostModal: React.FC<EditPostModalProps> = ({
       calculatedBadgeTag = awardsDetail ? `🏆 ${awardsDetail}` : 'CHAMPIONSHIP';
       calculatedBadgeType = 'trophy';
     } else {
-      calculatedBadgeTag = 'NOTICE';
+      calculatedBadgeTag = undefined;
       calculatedBadgeType = 'regular';
     }
 
@@ -140,7 +140,7 @@ export const EditPostModal: React.FC<EditPostModalProps> = ({
           <div className="flex items-center gap-2">
             <span className="text-[#f5c200]">✏️</span>
             <h2 className="font-chivo font-black text-base text-white">
-              게시글 / 공지 수정
+              게시물 수정
             </h2>
           </div>
           <div className="flex items-center gap-1">
@@ -148,7 +148,7 @@ export const EditPostModal: React.FC<EditPostModalProps> = ({
               type="button"
               onClick={handleOpenDelete}
               className="text-red-400 hover:text-red-300 hover:bg-red-500/10 p-1.5 rounded-lg transition-colors cursor-pointer"
-              title="게시글 삭제"
+              title="게시물 삭제"
             >
               <Trash2 size={16} />
             </button>
@@ -162,10 +162,10 @@ export const EditPostModal: React.FC<EditPostModalProps> = ({
         </div>
 
         <form onSubmit={handleSubmit} className="p-4 space-y-4 max-h-[82vh] overflow-y-auto no-scrollbar">
-          {/* Category Tabs: 일반 공지, 대회/수상, 게임/매치 */}
+          {/* Category Tabs: 일반 게시물, 대회/수상, 게임/매치 */}
           <div>
             <label className="block text-[11px] font-chivo font-bold text-gray-300 mb-1.5">
-              공지 분류
+              게시물 분류
             </label>
             <div className="grid grid-cols-3 gap-2">
               <button
@@ -178,7 +178,7 @@ export const EditPostModal: React.FC<EditPostModalProps> = ({
                 }`}
               >
                 <span>📢</span>
-                <span>일반 공지</span>
+                <span>일반 게시물</span>
               </button>
               <button
                 type="button"
@@ -211,7 +211,7 @@ export const EditPostModal: React.FC<EditPostModalProps> = ({
           <div>
             <label className="block text-[11px] font-chivo font-bold text-gray-300 mb-1 flex items-center justify-between">
               <span>제목</span>
-              <span className="text-[10px] text-gray-400 font-normal">공지 요약 제목</span>
+              <span className="text-[10px] text-gray-400 font-normal">게시물 요약 제목</span>
             </label>
             <input
               type="text"
@@ -231,7 +231,7 @@ export const EditPostModal: React.FC<EditPostModalProps> = ({
               rows={4}
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
-              placeholder="스쿼시 경기 결과나 클럽 공지사항을 작성해주세요..."
+              placeholder="스쿼시 경기 결과나 클럽 소식을 작성해주세요..."
               className="w-full px-3 py-2 rounded-lg bg-[#11131a] border border-white/10 text-xs text-white focus:outline-none focus:border-[#f5c200] leading-relaxed resize-none"
               required
             />

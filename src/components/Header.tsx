@@ -38,9 +38,9 @@ export const Header: React.FC<HeaderProps> = ({
     if (title) return title;
     switch (currentTab) {
       case 'feed':
-        return '클럽 공지';
+        return '클럽 게시물';
       case 'members':
-        return currentUser?.isAdmin || currentUser?.role === 'admin' ? '사용자관리' : '클럽 공지';
+        return currentUser?.isAdmin || currentUser?.role === 'admin' ? '사용자관리' : '클럽 게시물';
       case 'trophies':
         return '명예의 전당';
       case 'register':
@@ -48,7 +48,7 @@ export const Header: React.FC<HeaderProps> = ({
       case 'backup':
         return '백업관리';
       default:
-        return '클럽 공지';
+        return '클럽 게시물';
     }
   };
 
